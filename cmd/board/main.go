@@ -5,8 +5,12 @@ import (
 	"board/internal/handler"
 	"board/internal/hub"
 	"board/internal/ratelimit"
+	"board/static"
 	"log"
 	"net/http"
+	"os"
+	"os/signal"
+	"syscall"
 )
 
 func main() {
@@ -17,7 +21,7 @@ func main() {
 		log.Fatal(err)
 	}
 
-	gameHandler := handler.NewHandler(gameHub)
+	gameHandler := handler.NewHandler(gameHub, static.FS)
 	gameMux := http.NewServeMux()
 	gameHandler.RegisterRoutes(gameMux)
 
@@ -31,4 +35,9 @@ func main() {
 		log.Fatal(err)
 	}
 
+	sigCh := make(chan os.Signal, 1)
+	signal.Notify(sigCh, os.Interrupt, syscall.SIGTERM)
+	log.Println("server started on :8080")
+	<-sigCh
+	log.Println("shutting down")
 }
