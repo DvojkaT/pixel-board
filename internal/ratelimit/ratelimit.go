@@ -9,17 +9,17 @@ type User struct {
 	LastPaint time.Time
 }
 type Limiter struct {
-	Users map[uint64]*User
+	Users map[string]*User
 	mtx   sync.RWMutex
 }
 
 func NewLimiter() *Limiter {
 	return &Limiter{
-		Users: make(map[uint64]*User),
+		Users: make(map[string]*User),
 	}
 }
 
-func (l *Limiter) TryPaint(userId uint64) bool {
+func (l *Limiter) TryPaint(userId string) bool {
 	l.mtx.Lock()
 	defer l.mtx.Unlock()
 	user, ok := l.Users[userId]
