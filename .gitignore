@@ -1,0 +1,32 @@
+# GoLand
+.idea/
+
+# Go build artifacts
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+*.test
+*.out
+
+# Go vendor
+vendor/
+.env
+
+# Go workspace
+go.work
+go.work.sum
+
+# Temp / cache
+tmp/
+*.log
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Claude Code
+.claude/
+CLAUDE.md
+.env

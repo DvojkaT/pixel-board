@@ -1,0 +1,17 @@
+[build]
+# Command to build the application
+cmd = "go build -o ./tmp/main cmd/board/main.go"
+
+# Binary file path
+bin = "tmp/main"
+
+# Files to watch
+include_ext = ["go", "tpl", "tmpl", "html", ".env"]
+
+# Directories to ignore
+exclude_dir = ["assets", "tmp", "vendor", "frontend/node_modules"]
+
+pre_cmd = ["echo '\n\n\n\n\n--------------------------REBUILD-------------------------\n\n\n\n\n'"]
+[run]
+# Command to run the built binary
+cmd = "./tmp/main"
