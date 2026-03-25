@@ -26,7 +26,11 @@ func (h *Handler) RegisterRoutes(mux *http.ServeMux) {
 		panic(err)
 	}
 
-	mux.Handle("/connection/websocket", centrifuge.NewWebsocketHandler(h.hub.Node(), centrifuge.WebsocketConfig{}))
+	mux.Handle("/connection/websocket", centrifuge.NewWebsocketHandler(h.hub.Node(), centrifuge.WebsocketConfig{
+		CheckOrigin: func(r *http.Request) bool {
+			return true
+		},
+	}))
 	mux.Handle("/", http.FileServer(http.FS(subFS)))
 	mux.HandleFunc("/health", func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusOK)
