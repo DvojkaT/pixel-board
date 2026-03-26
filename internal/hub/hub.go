@@ -16,7 +16,7 @@ type PaintMsg struct {
 	Type  string `json:"type"`
 	X     int    `json:"x"`
 	Y     int    `json:"y"`
-	Color uint32 `json:"color"`
+	Color string `json:"color"`
 }
 type Hub struct {
 	node    *centrifuge.Node

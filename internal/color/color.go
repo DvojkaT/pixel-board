@@ -1,8 +1,7 @@
 package color
 
-type Color uint32
+type Color string
 
 const (
-	BLUE Color = iota
-	RED
+	RED Color = "#FF0000"
 )
