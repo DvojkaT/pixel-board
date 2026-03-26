@@ -27,7 +27,7 @@ func (l *Limiter) TryPaint(userId string) bool {
 		user = &User{}
 		l.Users[userId] = user
 	}
-	if time.Since(user.LastPaint) > 500*time.Millisecond {
+	if time.Since(user.LastPaint) > 100*time.Millisecond {
 		user.LastPaint = time.Now()
 		return true
 	}

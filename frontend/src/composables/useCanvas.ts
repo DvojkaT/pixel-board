@@ -14,7 +14,7 @@ export function useCanvas(canvasRef: Ref<HTMLCanvasElement | null>, sub: Subscri
     canvas.width = 1000
     canvas.height = 1000
 
-    canvas.addEventListener('click', (e) => {
+    canvas.addEventListener('mousedown', (e) => {
       const rect = canvas.getBoundingClientRect()
       const x = Math.floor((e.clientX - rect.left) / 10)
       const y = Math.floor((e.clientY - rect.top) / 10)
