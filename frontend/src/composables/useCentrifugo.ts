@@ -11,5 +11,5 @@ export  function useCentrifugo() {
     centrifuge.disconnect()
   })
 
-  return {sub}
+  return {sub, centrifuge}
 }

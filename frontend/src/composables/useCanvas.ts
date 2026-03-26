@@ -1,7 +1,7 @@
-import {Subscription} from "centrifuge";
+import {type Centrifuge, Subscription} from "centrifuge";
 import {onMounted, type Ref} from "vue";
 
-export function useCanvas(canvasRef: Ref<HTMLCanvasElement | null>, sub: Subscription) {
+export function useCanvas(canvasRef: Ref<HTMLCanvasElement | null>, sub: Subscription, centrifuge: Centrifuge) {
   onMounted(() => {
     sub.subscribe()
     const canvas = canvasRef.value
@@ -30,6 +30,19 @@ export function useCanvas(canvasRef: Ref<HTMLCanvasElement | null>, sub: Subscri
       const msg = ctx.data
       if (msg.type === 'pixel_paint') {
         drawPixel(msg.x, msg.y, msg.color)
+      }
+    })
+
+    centrifuge.on('message', (ctx) => {
+      const msg = ctx.data
+      if (msg.type === 'canvas_state') {
+        for (let x = 0; x < msg.pixels.length; x++) {
+          for (let y = 0; y < msg.pixels[x].length; y++) {
+            if (msg.pixels[x][y] !== '') {
+              drawPixel(x, y, msg.pixels[x][y])
+            }
+          }
+        }
       }
     })
   })

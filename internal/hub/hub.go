@@ -18,6 +18,12 @@ type PaintMsg struct {
 	Y     int    `json:"y"`
 	Color string `json:"color"`
 }
+
+type CanvasStateMsg struct {
+	Type   string          `json:"type"`
+	Pixels [][]color.Color `json:"pixels"`
+}
+
 type Hub struct {
 	node    *centrifuge.Node
 	canvas  *canvas.Canvas
@@ -51,6 +57,17 @@ func (h *Hub) Run() error {
 
 	h.node.OnConnect(func(client *centrifuge.Client) {
 		client.OnSubscribe(func(event centrifuge.SubscribeEvent, callback centrifuge.SubscribeCallback) {
+			snapshot := h.canvas.Snapshot()
+			msg := CanvasStateMsg{Type: "canvas_state", Pixels: snapshot}
+			data, err := json.Marshal(msg)
+			if err != nil {
+				callback(centrifuge.SubscribeReply{}, centrifuge.ErrorInternal)
+				return
+			}
+			if err := client.Send(data); err != nil {
+				callback(centrifuge.SubscribeReply{}, centrifuge.ErrorInternal)
+				return
+			}
 			callback(centrifuge.SubscribeReply{}, nil)
 		})
 

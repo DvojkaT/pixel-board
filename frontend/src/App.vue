@@ -11,8 +11,8 @@ import {useCentrifugo} from "@/composables/useCentrifugo.ts";
 import {useCanvas} from "@/composables/useCanvas.ts";
 
 const board = ref<HTMLCanvasElement | null>(null);
-const {sub} = useCentrifugo()
-useCanvas(board, sub)
+const {sub, centrifuge} = useCentrifugo()
+useCanvas(board, sub, centrifuge)
 </script>
 
 <style scoped></style>
