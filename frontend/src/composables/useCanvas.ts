@@ -4,6 +4,8 @@ import {onMounted, ref, type Ref} from "vue";
 export function useCanvas(canvasRef: Ref<HTMLCanvasElement | null>, overlayRef: Ref<HTMLCanvasElement | null>, sub: Subscription, centrifuge: Centrifuge) {
   const username = ref<string>("")
   const color = ref<string>("")
+  const cursors = new Map<string, {x: number, y: number, name: string, color: string}>()
+  const myId = ref<string>("")
 
   onMounted(() => {
     sub.subscribe()
@@ -41,7 +43,20 @@ export function useCanvas(canvasRef: Ref<HTMLCanvasElement | null>, overlayRef: 
 
     let prevX = -1
     let prevY = -1
+    let lastSent = 0
+
     canvas.addEventListener('mousemove', (e) => {
+      const now = Date.now()
+      if (now - lastSent > 30) {
+        const rect = canvas.getBoundingClientRect()
+        const mouseX = (e.clientX - rect.left) / canvas.width
+        const mouseY = (e.clientY - rect.top) / canvas.height
+        sub.publish({ type: 'cursor_move', x: mouseX, y: mouseY })
+
+        lastSent = now
+      }
+
+
       const rect = canvas.getBoundingClientRect()
       const x = Math.floor((e.clientX - rect.left) / 10)
       const y = Math.floor((e.clientY - rect.top) / 10)
@@ -70,6 +85,26 @@ export function useCanvas(canvasRef: Ref<HTMLCanvasElement | null>, overlayRef: 
       if (msg.type === 'pixel_paint') {
         drawPixel(msg.x, msg.y, msg.color)
       }
+      if (msg.type === 'cursor_move') {
+        if (msg.user_id == myId.value) return
+        cursors.set(msg.user_id, { x: msg.x, y: msg.y, name: msg.name, color: msg.color })
+
+        overlayCtx.clearRect(0, 0, 1000, 1000)
+        drawGrid(overlayCtx)
+
+        cursors.forEach((cursor) => {
+
+          const cx = cursor.x * 1000
+          const cy = cursor.y * 1000
+
+          overlayCtx.fillStyle = cursor.color
+          overlayCtx.fillRect(cx - 4, cy - 4, 8, 8)
+
+          overlayCtx.fillStyle = 'black'
+          overlayCtx.font = '12px sans-serif'
+          overlayCtx.fillText(cursor.name, cx + 6, cy)
+        })
+      }
     })
 
     centrifuge.on('message', (ctx) => {
@@ -85,7 +120,7 @@ export function useCanvas(canvasRef: Ref<HTMLCanvasElement | null>, overlayRef: 
 
         username.value = msg.name
         color.value = msg.color
-
+        myId.value = msg.user_id
       }
     })
   })
