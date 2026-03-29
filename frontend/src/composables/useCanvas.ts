@@ -26,11 +26,19 @@ export function useCanvas(canvasRef: Ref<HTMLCanvasElement | null>, overlayRef: 
     const overlayCtx = canvasOverlay.getContext('2d')!
     if (!overlayCtx) return
 
-    canvas.width = 1000
-    canvas.height = 1000
+    const dpr = window.devicePixelRatio || 1
 
-    canvasOverlay.width = 1000
-    canvasOverlay.height = 1000
+    canvas.width = 1000 * dpr
+    canvas.height = 1000 * dpr
+    canvas.style.width = '1000px'
+    canvas.style.height = '1000px'
+    ctx.scale(dpr, dpr)
+
+    canvasOverlay.width = 1000 * dpr
+    canvasOverlay.height = 1000 * dpr
+    canvasOverlay.style.width = '1000px'
+    canvasOverlay.style.height = '1000px'
+    overlayCtx.scale(dpr, dpr)
 
     drawGrid(overlayCtx)
 
@@ -49,8 +57,8 @@ export function useCanvas(canvasRef: Ref<HTMLCanvasElement | null>, overlayRef: 
       const now = Date.now()
       if (now - lastSent > 30) {
         const rect = canvas.getBoundingClientRect()
-        const mouseX = (e.clientX - rect.left) / canvas.width
-        const mouseY = (e.clientY - rect.top) / canvas.height
+        const mouseX = (e.clientX - rect.left) / 1000
+        const mouseY = (e.clientY - rect.top) / 1000
         sub.publish({ type: 'cursor_move', x: mouseX, y: mouseY })
 
         lastSent = now
