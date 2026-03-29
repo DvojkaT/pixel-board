@@ -3,6 +3,7 @@ package hub
 import (
 	"board/internal/canvas"
 	"board/internal/color"
+	"board/internal/name"
 	"board/internal/ratelimit"
 	"context"
 	"encoding/json"
@@ -22,6 +23,8 @@ type PaintMsg struct {
 type CanvasStateMsg struct {
 	Type   string          `json:"type"`
 	Pixels [][]color.Color `json:"pixels"`
+	Name   name.Name       `json:"name"`
+	Color  color.Color     `json:"color"`
 }
 
 type Hub struct {
@@ -58,7 +61,7 @@ func (h *Hub) Run() error {
 	h.node.OnConnect(func(client *centrifuge.Client) {
 		client.OnSubscribe(func(event centrifuge.SubscribeEvent, callback centrifuge.SubscribeCallback) {
 			snapshot := h.canvas.Snapshot()
-			msg := CanvasStateMsg{Type: "canvas_state", Pixels: snapshot}
+			msg := CanvasStateMsg{Type: "canvas_state", Pixels: snapshot, Name: name.Random(), Color: color.Random()}
 			data, err := json.Marshal(msg)
 			if err != nil {
 				callback(centrifuge.SubscribeReply{}, centrifuge.ErrorInternal)

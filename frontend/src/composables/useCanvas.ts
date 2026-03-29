@@ -1,9 +1,13 @@
 import {type Centrifuge, Subscription} from "centrifuge";
-import {onMounted, type Ref} from "vue";
+import {onMounted, ref, type Ref} from "vue";
 
 export function useCanvas(canvasRef: Ref<HTMLCanvasElement | null>, overlayRef: Ref<HTMLCanvasElement | null>, sub: Subscription, centrifuge: Centrifuge) {
+  const username = ref<string>("")
+  const color = ref<string>("")
+
   onMounted(() => {
     sub.subscribe()
+
     const canvas = canvasRef.value
     if (!canvas) {
       return
@@ -32,7 +36,7 @@ export function useCanvas(canvasRef: Ref<HTMLCanvasElement | null>, overlayRef: 
       const rect = canvas.getBoundingClientRect()
       const x = Math.floor((e.clientX - rect.left) / 10)
       const y = Math.floor((e.clientY - rect.top) / 10)
-      sub.publish({ type: 'pixel_paint', x, y, color:'#FF0000' })
+      sub.publish({ type: 'pixel_paint', x, y, color:color.value })
     })
 
     let prevX = -1
@@ -78,6 +82,10 @@ export function useCanvas(canvasRef: Ref<HTMLCanvasElement | null>, overlayRef: 
             }
           }
         }
+
+        username.value = msg.name
+        color.value = msg.color
+
       }
     })
   })
@@ -97,4 +105,6 @@ export function useCanvas(canvasRef: Ref<HTMLCanvasElement | null>, overlayRef: 
 
     overlayCtx.stroke()
   }
+
+  return {username, color}
 }

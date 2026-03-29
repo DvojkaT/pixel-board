@@ -1,12 +1,14 @@
 package ratelimit
 
 import (
+	"board/internal/color"
 	"sync"
 	"time"
 )
 
 type User struct {
 	LastPaint time.Time
+	color     color.Color
 }
 type Limiter struct {
 	Users map[string]*User
@@ -25,6 +27,7 @@ func (l *Limiter) TryPaint(userId string) bool {
 	user, ok := l.Users[userId]
 	if !ok {
 		user = &User{}
+
 		l.Users[userId] = user
 	}
 	if time.Since(user.LastPaint) > 100*time.Millisecond {
