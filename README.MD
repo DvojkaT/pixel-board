@@ -1,13 +1,32 @@
-# Board
-Приложение состоит из двух частей
-1. Бэкенд на GO
-2. Фронт на Vue3
+# Pixelboard
 
-# Билд
+Совместный пиксельный холст в реальном времени.
+
+Рисование вместе с другими пользователями. Механика вдохновлена r/place, возможность видеть курсоры игроков как в Figma (почти)
+
+## Demo
+![demo](docs/demo.gif)
+
+## Стек
+- **Backend**: Go + centrifuge (WebSocket)
+- **Frontend**: Vue 3 + Vite + Canvas API
+
+## Запуск в dev окружении
+1. docker compose up
+2. http://localhost:5173
+
+## Как это работает
+- Холст 100×100 пикселей, хранится в памяти приложения
+- Rate limit: 1 пиксель каждые 500ms (без накопления) на игрока
+- Курсоры с throttle 30fps
+
+## Билд
 1. ```docker compose exec -it node bun run build``` - Билд фронта
-2.
-```docker compose exec -it app go run cmd/board/main.go``` - Исполнение приложения
+2. ```docker compose exec -it app go build cmd/board/main.go ``` - Билд бинарного файла
 
-или
+## Известные проблемы
+- После выхода или рефреша страницы остается курсор игрока
+- Не прокинут хост сервера в .env
+- При движении курсора исчезают другие игроки
 
-```docker compose exec -it app go build cmd/board/main.go ``` - Билд бинарного файла
+P.S Скорее всего не буду чинить
