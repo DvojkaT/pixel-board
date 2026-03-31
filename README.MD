@@ -9,7 +9,7 @@
 
 ## Стек
 - **Backend**: Go + centrifuge (WebSocket)
-- **Frontend**: Vue 3 + Vite + Canvas API
+- **Frontend**: Vue 3
 
 ## Запуск в dev окружении
 1. docker compose up
