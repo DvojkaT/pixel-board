@@ -11,10 +11,9 @@ const (
 	BANANA   Name = "банан"
 	BOAR     Name = "кабан"
 	KANGAROO Name = "кенгуру"
-	BBD      Name = "большой черный х" // todo выпилить
 )
 
-var Names = []Name{CAPYBARA, SNAKE, MELON, BANANA, BOAR, KANGAROO, BBD}
+var Names = []Name{CAPYBARA, SNAKE, MELON, BANANA, BOAR, KANGAROO}
 
 func Random() Name {
 	return Names[rand.Intn(len(Names))]

@@ -3,9 +3,15 @@ services:
     build:
       dockerfile: ./docker/Dockerfile
     ports:
-      - "8085:8080"
+      - "8080:8080"
     volumes:
       - .:/app
+    healthcheck:
+      test: [ "CMD", "wget", "-qO-", "http://localhost:8080/health" ]
+      interval: 10s
+      timeout: 3s
+      retries: 10
+
   node:
     image: oven/bun:1-alpine
     working_dir: /var/www/frontend
@@ -13,4 +19,7 @@ services:
     - ./:/var/www
     ports:
       - "5173:5173"
+    depends_on:
+      app:
+        condition: service_healthy
     command: "bun run dev --host"
